@@ -180,10 +180,15 @@ func (p *Pipeline) Run() (killChan chan error) {
 	go func() {
 		p.wg.Wait()
 		p.timer.Stop()
-		killChan <- nil
+		/*Make this a non-blocking call incase killchan was signalled earlier through some other thread*/
+		select {
+		case killChan <- nil:
+		}
 	}()
-
-	handleInterrupt(killChan)
+	/*Aikaan doesn't need a routine to check for OS signals for exit. This handler runs for every pipeline that is initiated and
+	waits there indefinitely even after the pipeline is executed.This causes the handleInterrupt goroutine to persist forever causing
+	a leak*/
+	//handleInterrupt(killChan)
 
 	return killChan
 }

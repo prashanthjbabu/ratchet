@@ -6,6 +6,9 @@ import "github.com/dailyburn/ratchet/logger"
 func KillPipelineIfErr(err error, killChan chan error) {
 	if err != nil {
 		logger.Error(err.Error())
-		killChan <- err
+		/*Make this a non-blocking call incase killchan was signalled earlier through some other thread*/
+		select {
+		case killChan <- err:
+		}
 	}
 }
