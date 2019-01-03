@@ -9,6 +9,7 @@ func KillPipelineIfErr(err error, killChan chan error) {
 		/*Make this a non-blocking call incase killchan was signalled earlier through some other thread*/
 		select {
 		case killChan <- err:
+		default:
 		}
 	}
 }

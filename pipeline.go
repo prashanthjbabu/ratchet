@@ -183,6 +183,7 @@ func (p *Pipeline) Run() (killChan chan error) {
 		/*Make this a non-blocking call incase killchan was signalled earlier through some other thread*/
 		select {
 		case killChan <- nil:
+		default:
 		}
 	}()
 	/*Aikaan doesn't need a routine to check for OS signals for exit. This handler runs for every pipeline that is initiated and
